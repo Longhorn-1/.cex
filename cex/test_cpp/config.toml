@@ -1,0 +1,5 @@
+[general]
+entry_point = "hello.cpp"
+
+[dependencies]
+libraries = ["stdc++"]  # Standard C++ library (default, can omit)

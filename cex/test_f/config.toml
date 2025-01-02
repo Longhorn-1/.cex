@@ -1,0 +1,5 @@
+[general]
+entry_point = "hello.f90"
+
+[dependencies]
+libraries = []  # Add libraries like 'lapack' or 'blas' if needed

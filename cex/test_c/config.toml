@@ -1,0 +1,5 @@
+[general]
+entry_point = "hello.c"
+
+[dependencies]
+libraries = ["m"]  # Math library (example, can omit if not needed)

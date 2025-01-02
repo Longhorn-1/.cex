@@ -1,0 +1,6 @@
+[general]
+entry_point = "hello.rb"
+
+[dependencies]
+libraries = []  # Ruby doesn't require external libraries in this case
+packages = []   # Add Ruby gems if needed

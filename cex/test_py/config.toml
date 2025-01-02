@@ -1,0 +1,6 @@
+[general]
+entry_point = "hello.py"
+
+[dependencies]
+libraries = []  # Python doesn't require libraries to be specified
+packages = ["requests"]  # Example: Add Python packages if needed
