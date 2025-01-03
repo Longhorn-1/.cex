@@ -4,11 +4,10 @@
 #include <zlib.h>
 #include <json/json.h>
 #include <filesystem>
-#include <cstdlib> // For system()
+#include <cstdlib> 
 
 namespace fs = std::filesystem;
 
-// Function to decompress binary data into memory
 std::string decompressToMemory(std::ifstream &input, uint64_t fileSize) {
     std::vector<char> compressedBuffer(fileSize);
     input.read(compressedBuffer.data(), fileSize);
@@ -24,10 +23,10 @@ std::string decompressToMemory(std::ifstream &input, uint64_t fileSize) {
     return std::string(decompressedBuffer.data(), decompressedSize);
 }
 
-// Function to execute embedded source code
+
 void executeEmbeddedCode(const std::string &sourceCode, const std::string &fileType) {
     if (fileType == "py") {
-        // Write the Python script to a temporary file and execute it
+
         std::string tempFile = "temp_script.py";
         std::ofstream scriptFile(tempFile);
         if (!scriptFile.is_open()) {
@@ -43,7 +42,7 @@ void executeEmbeddedCode(const std::string &sourceCode, const std::string &fileT
             throw std::runtime_error("Execution failed for Python script.");
         }
     } else if (fileType == "rb") {
-        // Handle Ruby files
+
         std::string tempFile = "temp_script.rb";
         std::ofstream scriptFile(tempFile);
         if (!scriptFile.is_open()) {
@@ -59,7 +58,7 @@ void executeEmbeddedCode(const std::string &sourceCode, const std::string &fileT
             throw std::runtime_error("Execution failed for Ruby script.");
         }
     } else if (fileType == "lisp") {
-        // Handle Lisp files
+
         std::string tempFile = "temp_script.lisp";
         std::ofstream scriptFile(tempFile);
         if (!scriptFile.is_open()) {
@@ -85,20 +84,18 @@ void runCEX(const std::string &cexPath) {
         throw std::runtime_error("Failed to open .cex file: " + cexPath);
     }
 
-    // Read source size
+
     uint64_t sourceSize;
     cexFile.read(reinterpret_cast<char *>(&sourceSize), sizeof(sourceSize));
 
-    // Read source code
     std::vector<char> sourceData(sourceSize);
     cexFile.read(sourceData.data(), sourceSize);
 
-    // Read metadata size
     uint64_t metadataSize;
     cexFile.seekg(-static_cast<int>(sizeof(metadataSize)), std::ios::end);
     cexFile.read(reinterpret_cast<char *>(&metadataSize), sizeof(metadataSize));
 
-    // Read metadata
+
     cexFile.seekg(-static_cast<int>(sizeof(metadataSize) + metadataSize), std::ios::end);
     std::vector<char> metadataBuffer(metadataSize);
     cexFile.read(metadataBuffer.data(), metadataSize);
@@ -111,7 +108,7 @@ void runCEX(const std::string &cexPath) {
         throw std::runtime_error("Failed to parse metadata");
     }
 
-    // Determine file type and execute
+
     std::string entryPoint = metadata["entry_point"].asString();
     std::string fileType = entryPoint.substr(entryPoint.find_last_of('.') + 1);
 
