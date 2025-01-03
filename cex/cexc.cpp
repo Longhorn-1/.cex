@@ -22,12 +22,10 @@ void embedBinaryIntoCEX(const std::string &sourcePath, const std::string &output
         throw std::runtime_error("Failed to create .cex file: " + outputCEX);
     }
 
-    // Write source data
     uint64_t sourceSize = sourceData.size();
     cexFile.write(reinterpret_cast<const char *>(&sourceSize), sizeof(sourceSize));
     cexFile.write(sourceData.data(), sourceSize);
 
-    // Write metadata
     std::string metadataString = metadata.toStyledString();
     uint64_t metadataSize = metadataString.size();
     cexFile.write(metadataString.c_str(), metadataSize);
@@ -46,12 +44,10 @@ int main(int argc, char *argv[]) {
         std::string folderPath = argv[1];
         std::string outputCEX = argv[2];
 
-        // Ensure the folder exists
         if (!fs::is_directory(folderPath)) {
             throw std::runtime_error("The specified folder does not exist: " + folderPath);
         }
 
-        // Load config.toml
         std::string configPath = folderPath + "/config.toml";
         if (!fs::exists(configPath)) {
             throw std::runtime_error("Missing config.toml in the folder: " + folderPath);
@@ -60,7 +56,6 @@ int main(int argc, char *argv[]) {
         auto config = toml::parse(configPath);
         std::string entryPoint = toml::find<std::string>(config, "general", "entry_point");
 
-        // Determine if the entry point is a Python file
         std::string sourcePath = folderPath + "/" + entryPoint;
         std::string fileExtension = sourcePath.substr(sourcePath.find_last_of('.') + 1);
 
@@ -69,15 +64,12 @@ int main(int argc, char *argv[]) {
             throw std::runtime_error("Unsupported source file type: " + sourcePath);
         }
 
-        // Prepare metadata
         Json::Value metadata;
         metadata["entry_point"] = entryPoint;
 
         if (fileExtension == "py" || fileExtension == "rb" || fileExtension == "lisp") {
-            // Embed interpreted source code directly
             embedBinaryIntoCEX(sourcePath, outputCEX, metadata);
         } else {
-            // Compile source files to binary
             std::string binaryPath = "embedded_binary";
 
             std::string compiler = (fileExtension == "cpp") ? "g++" : (fileExtension == "c") ? "gcc" : "gfortran";
@@ -86,7 +78,6 @@ int main(int argc, char *argv[]) {
                 throw std::runtime_error("Failed to compile source file: " + sourcePath);
             }
 
-            // Embed compiled binary
             embedBinaryIntoCEX(binaryPath, outputCEX, metadata);
             fs::remove(binaryPath);
         }
